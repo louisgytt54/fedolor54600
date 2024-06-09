@@ -13,7 +13,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100vh;
             text-align: center;
         }
@@ -22,11 +22,20 @@
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
-            padding: 20px 0 0 38px; /* Décaler le logo vers la droite de 1,8 cm (18px) */
+            padding: 20px 0 0 20px; /* Décaler le logo vers la droite de 1,8 cm (18px) */
             box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         header img {
             max-height: 50px;
+        }
+        main {
+            margin-top: 80px; /* Espace pour le header */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         h2, h3 {
             color: #3E3E47;
@@ -168,38 +177,45 @@
     <header>
         <img src="Logo_fd-ogec.png" alt="Logo OGEC Lorraine">
     </header>
-    <div id="accessDenied">
-        <h1>Accès non autorisé</h1>
-        <p>Fedolor vous indique que vous n'avez pas accès à cette ressource.</p>
-    </div>
+    <main>
+        <div id="accessDenied">
+            <h1>Accès non autorisé</h1>
+            <p>Fedolor vous indique que vous n'avez pas accès à cette ressource.</p>
+        </div>
 
-    <div id="mainContent">
-        <h2>Calcul des jours de congé payé</h2>
-        <h3>Dates d'arrêt maladie</h3>
-        <form>
-            <label for="startDate">Date de début :</label>
-            <input type="date" id="startDate" name="startDate">
-            <br>
-            <label for="endDate">Date de fin :</label>
-            <input type="date" id="endDate" name="endDate">
-            <br>
-            <label for="typeArret">Type d'arrêt :</label>
-            <select id="typeArret" name="typeArret">
-                <option value="professionnelle">Maladie professionnelle</option>
-                <option value="classique">Maladie classique</option>
-            </select>
-            <br>
-            <label for="classification">Classification (AT/MP) :</label>
-            <select id="classification" name="classification">
-                <option value="36">36 jours par an</option>
-                <option value="51">51 jours par an</option>
-            </select>
-        </form>
-        <h3>Calcul final des jours acquis</h3>
-        <button type="button" onclick="calculateDays()">Calculer
-            <div class="button-animate"></div>
-        </button>
-        <p>Total général : <span id="totalDays" class="animate"></span></p>
-    </div>
+        <div id="mainContent">
+            <h2>Calcul des jours de congé payé</h2>
+            <h3>Dates d'arrêt maladie</h3>
+            <form>
+                <label for="startDate">Date de début :</label>
+                <input type="date" id="startDate" name="startDate">
+                <br>
+                <label for="endDate">Date de fin :</label>
+                <input type="date" id="endDate" name="endDate">
+                <br>
+                <label for="typeArret">Type d'arrêt :</label>
+                <select id="typeArret" name="typeArret">
+                    <option value="professionnelle">Maladie professionnelle</option>
+                    <option value="classique">Maladie classique</option>
+                </select>
+                <br>
+                <label for="classification">Classification (AT/MP) :</label>
+                <select id="classification" name="classification">
+                    <option value="36">36 jours par an</option>
+                    <option value="51">51 jours par an</option>
+                </select>
+            </form>
+            <h3>Calcul final des jours acquis</h3>
+            <button type="button" onclick="calculateDays()">Calculer
+                <div class="button-animate"></div>
+            </button>
+            <p>Total général : <span id="totalDays" class="animate"></span></p>
+        </div>
+    </main>
 </body>
 </html>
+"""
+
+# Écrire le fichier sur le système de fichiers
+with open("/mnt/data/index_with_logo_top.html", "w") as file:
+    file.write(index_html_content)
