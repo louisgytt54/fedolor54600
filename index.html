@@ -13,29 +13,27 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             height: 100vh;
             text-align: center;
         }
         header {
             width: 100%;
             display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: 20px 0 0 20px; /* Décaler le logo vers la droite de 1,8 cm (18px) */
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
             box-sizing: border-box;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
         header img {
-            max-height: 50px;
+            max-height: 100px;
         }
         main {
-            margin-top: 80px; /* Espace pour le header */
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            flex: 1;
         }
         h2, h3 {
             color: #3E3E47;
@@ -217,5 +215,5 @@
 """
 
 # Écrire le fichier sur le système de fichiers
-with open("/mnt/data/index_with_logo_top.html", "w") as file:
+with open("/mnt/data/index_with_large_logo_centered.html", "w") as file:
     file.write(index_html_content)
