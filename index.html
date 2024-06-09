@@ -118,6 +118,17 @@
             justify-content: center;
             height: 100%;
         }
+        #adminPanel {
+            margin-top: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #generatedPassword {
+            font-weight: bold;
+            color: #db0661;
+        }
     </style>
     <script>
         function calculateDays() {
@@ -170,6 +181,21 @@
             alert("N'oubliez pas d'ajouter les congés acquis avant et après la maladie au résultat.");
         }
 
+        function generatePassword() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        function createAccount() {
+            const username = document.getElementById("newUsername").value;
+            if (username) {
+                const password = generatePassword();
+                document.getElementById("generatedPassword").innerText = `Utilisateur: ${username}, Mot de passe: ${password}`;
+                alert(`Un email a été envoyé à l.guyot@est.urogec.org avec le mot de passe.`);
+            } else {
+                alert("Veuillez entrer un nom d'utilisateur.");
+            }
+        }
+
         window.onload = function() {
             const username = prompt("Veuillez entrer votre nom d'utilisateur:");
             const password = prompt("Veuillez entrer votre mot de passe:");
@@ -179,6 +205,7 @@
             } else {
                 document.getElementById("accessDenied").style.display = "none";
                 document.getElementById("mainContent").style.display = "flex";
+                document.getElementById("adminPanel").style.display = "flex";
             }
         }
     </script>
@@ -220,6 +247,13 @@
                 <div class="button-animate"></div>
             </button>
             <p>Total général : <span id="totalDays" class="animate"></span></p>
+        </div>
+
+        <div id="adminPanel">
+            <h3>Créer un nouvel identifiant utilisateur</h3>
+            <input type="text" id="newUsername" placeholder="Nom d'utilisateur">
+            <button type="button" onclick="createAccount()">Créer un identifiant</button>
+            <p id="generatedPassword"></p>
         </div>
     </main>
 </body>
