@@ -17,6 +17,17 @@
             height: 100vh;
             text-align: center;
         }
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        header img {
+            max-height: 50px;
+        }
         h2, h3 {
             color: #3E3E47;
         }
@@ -154,10 +165,14 @@
     </script>
 </head>
 <body>
+    <header>
+        <img src="Logo_fd-ogec.png" alt="Logo OGEC Lorraine">
+    </header>
     <div id="accessDenied">
         <h1>Accès non autorisé</h1>
         <p>Fedolor vous indique que vous n'avez pas accès à cette ressource.</p>
     </div>
+
     <div id="mainContent">
         <h2>Calcul des jours de congé payé</h2>
         <h3>Dates d'arrêt maladie</h3>
@@ -188,3 +203,11 @@
     </div>
 </body>
 </html>
+"""
+
+# Écrire le fichier sur le système de fichiers
+with open("/mnt/data/index_with_logo.html", "w") as file:
+    file.write(index_html_content)
+
+# Le fichier est prêt à être téléchargé
+
