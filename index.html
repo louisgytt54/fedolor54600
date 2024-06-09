@@ -3,16 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <title>Calcul des jours de congé payé</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="scripts.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F8F7EF;
+            color: #3E3E47;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+        h2, h3 {
+            color: #3E3E47;
+        }
+        form, button {
+            margin: 20px 0;
+        }
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #3E3E47;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        label {
+            margin-right: 10px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #3E3E47;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #db0661;
+            color: #F8F7EF;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        button:hover {
+            background-color: #3E3E47;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        #totalDays {
+            color: #5e8bbf;
+        }
+        .animate {
+            display: inline-block;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        .button-animate {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: skewX(-45deg);
+            transition: left 0.5s;
+        }
+        button:hover .button-animate {
+            left: 100%;
+        }
+        #accessDenied {
+            display: none;
+        }
+    </style>
+    <script>
+        function calculateDays() {
+            const startDate = new Date(document.getElementById("startDate").value);
+            const endDate = new Date(document.getElementById("endDate").value);
+            const typeArret = document.getElementById("typeArret").value;
+            const classification = document.getElementById("classification").value;
+            let totalDays = 0;
+
+            const daysInMonthProfessionnelle = classification === "51" ? 4.25 : 3;
+            const daysInMonthNonProfessionnelle = 3;
+
+            let currentDate = new Date(startDate);
+
+            if (typeArret === "professionnelle") {
+                while (currentDate <= endDate) {
+                    let monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                    let monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+                    if (currentDate.getMonth() === endDate.getMonth() && currentDate.getFullYear() === endDate.getFullYear()) {
+                        totalDays += (endDate.getDate() - currentDate.getDate() + 1) * (daysInMonthProfessionnelle / 30);
+                        break;
+                    } else {
+                        totalDays += (monthEnd.getDate() - currentDate.getDate() + 1) * (daysInMonthProfessionnelle / 30);
+                    }
+
+                    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                }
+            } else if (typeArret === "classique") {
+                const limitDate = new Date(startDate);
+                limitDate.setFullYear(startDate.getFullYear() + 1);
+                while (currentDate <= endDate) {
+                    if (currentDate > limitDate) break;
+
+                    let monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                    let monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+                    if (currentDate.getMonth() === endDate.getMonth() && currentDate.getFullYear() === endDate.getFullYear()) {
+                        totalDays += (endDate.getDate() - currentDate.getDate() + 1) * (daysInMonthNonProfessionnelle / 30);
+                        break;
+                    } else {
+                        totalDays += (monthEnd.getDate() - currentDate.getDate() + 1) * (daysInMonthNonProfessionnelle / 30);
+                    }
+
+                    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                }
+            }
+
+            document.getElementById("totalDays").innerText = totalDays.toFixed(2) + " jours";
+            alert("N'oubliez pas d'ajouter les congés acquis avant et après la maladie au résultat.");
+        }
+
+        window.onload = function() {
+            const username = prompt("Veuillez entrer votre nom d'utilisateur:");
+            const password = prompt("Veuillez entrer votre mot de passe:");
+            if (username !== "admin" || password !== "1234") {
+                document.getElementById("accessDenied").style.display = "block";
+                document.getElementById("mainContent").style.display = "none";
+            } else {
+                document.getElementById("accessDenied").style.display = "none";
+                document.getElementById("mainContent").style.display = "block";
+            }
+        }
+    </script>
 </head>
 <body>
     <div id="accessDenied">
         <h1>Accès non autorisé</h1>
         <p>Fedolor vous indique que vous n'avez pas accès à cette ressource.</p>
     </div>
-
-    <div id="mainContent" style="display: none;">
+    <div id="mainContent">
         <h2>Calcul des jours de congé payé</h2>
         <h3>Dates d'arrêt maladie</h3>
         <form>
