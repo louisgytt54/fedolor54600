@@ -189,25 +189,30 @@
             const username = document.getElementById("newUsername").value;
             if (username) {
                 const password = generatePassword();
+                localStorage.setItem(username, password);
                 document.getElementById("generatedPassword").innerText = `Utilisateur: ${username}, Mot de passe: ${password}`;
-                alert(`Un email a été envoyé à l.guyot@est.urogec.org avec le mot de passe.`);
             } else {
                 alert("Veuillez entrer un nom d'utilisateur.");
             }
         }
 
-        window.onload = function() {
+        function verifyLogin() {
             const username = prompt("Veuillez entrer votre nom d'utilisateur:");
             const password = prompt("Veuillez entrer votre mot de passe:");
-            if (username !== "admin" || password !== "1234") {
-                document.getElementById("accessDenied").style.display = "block";
-                document.getElementById("mainContent").style.display = "none";
-            } else {
+            if (username === "admin" && password === "1234") {
                 document.getElementById("accessDenied").style.display = "none";
                 document.getElementById("mainContent").style.display = "flex";
                 document.getElementById("adminPanel").style.display = "flex";
+            } else if (localStorage.getItem(username) === password) {
+                document.getElementById("accessDenied").style.display = "none";
+                document.getElementById("mainContent").style.display = "flex";
+            } else {
+                document.getElementById("accessDenied").style.display = "block";
+                document.getElementById("mainContent").style.display = "none";
             }
         }
+
+        window.onload = verifyLogin;
     </script>
 </head>
 <body>
