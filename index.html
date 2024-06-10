@@ -131,6 +131,25 @@
         }
     </style>
     <script>
+        // Charger les utilisateurs à partir de localStorage ou utiliser des utilisateurs par défaut
+        const users = JSON.parse(localStorage.getItem('users')) || [
+            { username: "j.fraitas", password: "5643" },
+            { username: "user2", password: "2345" },
+            { username: "user3", password: "3456" },
+            { username: "user4", password: "4567" },
+            { username: "user5", password: "5678" },
+            { username: "user6", password: "6789" },
+            { username: "user7", password: "7890" },
+            { username: "user8", password: "8901" },
+            { username: "user9", password: "9012" },
+            { username: "user10", password: "0123" }
+        ];
+
+        // Sauvegarder les utilisateurs dans localStorage
+        function saveUsers() {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
         function calculateDays() {
             const startDate = new Date(document.getElementById("startDate").value);
             const endDate = new Date(document.getElementById("endDate").value);
@@ -181,34 +200,33 @@
             alert("N'oubliez pas d'ajouter les congés acquis avant et après la maladie au résultat.");
         }
 
-        function generatePassword() {
-            return Math.floor(1000 + Math.random() * 9000).toString();
-        }
-
-        function createAccount() {
-            const username = document.getElementById("newUsername").value;
-            if (username) {
-                const password = generatePassword();
-                localStorage.setItem(username, password);
-                document.getElementById("generatedPassword").innerText = `Utilisateur: ${username}, Mot de passe: ${password}`;
-            } else {
-                alert("Veuillez entrer un nom d'utilisateur.");
-            }
-        }
-
         function verifyLogin() {
             const username = prompt("Veuillez entrer votre nom d'utilisateur:");
             const password = prompt("Veuillez entrer votre mot de passe:");
+            const user = users.find(user => user.username === username && user.password === password);
+
             if (username === "admin" && password === "1234") {
+                document.getElementById("adminPanel").style.display = "flex";
                 document.getElementById("accessDenied").style.display = "none";
                 document.getElementById("mainContent").style.display = "flex";
-                document.getElementById("adminPanel").style.display = "flex";
-            } else if (localStorage.getItem(username) === password) {
+            } else if (user) {
                 document.getElementById("accessDenied").style.display = "none";
                 document.getElementById("mainContent").style.display = "flex";
             } else {
                 document.getElementById("accessDenied").style.display = "block";
                 document.getElementById("mainContent").style.display = "none";
+            }
+        }
+
+        function createAccount() {
+            const username = document.getElementById("newUsername").value;
+            const password = Math.floor(1000 + Math.random() * 9000).toString();
+            if (username) {
+                users.push({ username, password });
+                saveUsers(); // Sauvegarder les utilisateurs dans localStorage
+                document.getElementById("generatedPassword").innerText = `Utilisateur: ${username}, Mot de passe: ${password}`;
+            } else {
+                alert("Veuillez entrer un nom d'utilisateur.");
             }
         }
 
