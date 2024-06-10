@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Calcul des jours de congés payées</title>
+    <title>Calcul des jours de congé payé</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -197,10 +197,10 @@
     <script>
         // Charger les utilisateurs à partir de localStorage ou utiliser des utilisateurs par défaut
         const users = JSON.parse(localStorage.getItem('users')) || [
-            { username: "s.paulin", password: "1223", role: "user", createdAt: "2023-01-01", status: "active", lastLogin: "2023-06-01" },
-            { username: "c.guyot", password: "1652", role: "user", createdAt: "2023-02-01", status: "active", lastLogin: "2023-06-02" },
-            { username: "j.fraitas", password: "8392", role: "user", createdAt: "2023-03-01", status: "active", lastLogin: "2023-06-03" },
-            { username: "a.grange", password: "8353", role: "user", createdAt: "2023-03-01", status: "active", lastLogin: "2023-06-03" },
+            { username: "admin", password: "1234", role: "admin", createdAt: "2023-01-01", status: "active" },
+            { username: "user1", password: "1234", role: "utilisateur", createdAt: "2023-01-01", status: "active" },
+            { username: "user2", password: "2345", role: "utilisateur", createdAt: "2023-02-01", status: "active" },
+            { username: "user3", password: "3456", role: "utilisateur", createdAt: "2023-03-01", status: "active" },
             // Ajoutez d'autres utilisateurs si nécessaire
         ];
 
@@ -315,8 +315,9 @@
             const username = document.getElementById("newUsername").value;
             const password = Math.floor(1000 + Math.random() * 9000).toString();
             const createdAt = new Date().toISOString().split('T')[0];
+            const role = document.getElementById("newUserRole").value;
             if (username) {
-                users.push({ username, password, role: "user", createdAt, status: "active", lastLogin: "" });
+                users.push({ username, password, role, createdAt, status: "active" });
                 saveUsers(); // Sauvegarder les utilisateurs dans localStorage
                 document.getElementById("generatedPassword").innerText = `Utilisateur: ${username}, Mot de passe: ${password}`;
                 displayUsers(); // Mettre à jour la liste des utilisateurs
@@ -334,7 +335,6 @@
                     <th>Rôle</th>
                     <th>Date de création</th>
                     <th>Statut</th>
-                    <th>Dernière connexion</th>
                     <th>Actions</th>
                 </tr>
             `;
@@ -345,8 +345,7 @@
                 row.insertCell(2).innerText = user.role;
                 row.insertCell(3).innerText = user.createdAt;
                 row.insertCell(4).innerText = user.status;
-                row.insertCell(5).innerText = user.lastLogin;
-                const actionsCell = row.insertCell(6);
+                const actionsCell = row.insertCell(5);
                 actionsCell.innerHTML = `
                     <button onclick="editUser('${user.username}')">Modifier</button>
                     <button onclick="deleteUser('${user.username}')">Supprimer</button>
@@ -359,7 +358,7 @@
             const user = users.find(user => user.username === username);
             if (user) {
                 const newUsername = prompt("Entrez le nouveau nom d'utilisateur:", user.username);
-                const newRole = prompt("Entrez le nouveau rôle:", user.role);
+                const newRole = prompt("Entrez le nouveau rôle (admin/utilisateur):", user.role);
                 const newStatus = prompt("Entrez le nouveau statut (active/inactive):", user.status);
 
                 if (newUsername) user.username = newUsername;
@@ -479,6 +478,10 @@
                 <div class="admin-section">
                     <h3>Créer un nouvel identifiant utilisateur</h3>
                     <input type="text" id="newUsername" placeholder="Nom d'utilisateur">
+                    <select id="newUserRole">
+                        <option value="utilisateur">Utilisateur</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
                     <button type="button" onclick="createAccount()">Créer un identifiant</button>
                     <p id="generatedPassword"></p>
                 </div>
@@ -489,9 +492,8 @@
                             <th>Nom d'utilisateur</th>
                             <th>Mot de passe</th>
                             <th>Rôle</th>
-                            <th>Date de création</th>
+                            <th>Membre depuis</th>
                             <th>Statut</th>
-                            <th>Dernière connexion</th>
                             <th>Actions</th>
                         </tr>
                         <!-- Les utilisateurs seront ajoutés ici -->
