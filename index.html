@@ -48,7 +48,7 @@
             margin: 20px 0;
         }
         table {
-            width: 50%;
+            width: 90%;
             border-collapse: collapse;
             margin-top: 20px;
         }
@@ -93,7 +93,7 @@
                 transform: translateY(0);
             }
             50% {
-                transform: translateY(-10px);
+                transform: translateY(-10px;
             }
         }
         .button-animate {
@@ -151,16 +151,10 @@
     <script>
         // Charger les utilisateurs à partir de localStorage ou utiliser des utilisateurs par défaut
         const users = JSON.parse(localStorage.getItem('users')) || [
-            { username: "user1", password: "1234" },
-            { username: "user2", password: "2345" },
-            { username: "user3", password: "3456" },
-            { username: "user4", password: "4567" },
-            { username: "user5", password: "5678" },
-            { username: "user6", password: "6789" },
-            { username: "user7", password: "7890" },
-            { username: "user8", password: "8901" },
-            { username: "user9", password: "9012" },
-            { username: "user10", password: "0123" }
+            { username: "user1", password: "1234", role: "user", createdAt: "2023-01-01", status: "active", lastLogin: "2023-06-01" },
+            { username: "user2", password: "2345", role: "user", createdAt: "2023-02-01", status: "active", lastLogin: "2023-06-02" },
+            { username: "user3", password: "3456", role: "user", createdAt: "2023-03-01", status: "active", lastLogin: "2023-06-03" },
+            // Ajoutez d'autres utilisateurs si nécessaire
         ];
 
         // Sauvegarder les utilisateurs dans localStorage
@@ -229,6 +223,9 @@
                 document.getElementById("mainContent").style.display = "flex";
                 document.getElementById("loginOverlay").style.display = "none";
                 document.querySelector('main').style.display = 'flex';
+                displayUsers(); // Afficher les
+
+ utilisateurs dans le panneau d'administration
             } else if (user) {
                 document.getElementById("accessDenied").style.display = "none";
                 document.getElementById("mainContent").style.display = "flex";
@@ -243,12 +240,68 @@
         function createAccount() {
             const username = document.getElementById("newUsername").value;
             const password = Math.floor(1000 + Math.random() * 9000).toString();
+            const createdAt = new Date().toISOString().split('T')[0];
             if (username) {
-                users.push({ username, password });
+                users.push({ username, password, role: "user", createdAt, status: "active", lastLogin: "" });
                 saveUsers(); // Sauvegarder les utilisateurs dans localStorage
                 document.getElementById("generatedPassword").innerText = `Utilisateur: ${username}, Mot de passe: ${password}`;
+                displayUsers(); // Mettre à jour la liste des utilisateurs
             } else {
                 alert("Veuillez entrer un nom d'utilisateur.");
+            }
+        }
+
+        function displayUsers() {
+            const usersTable = document.getElementById("usersTable");
+            usersTable.innerHTML = `
+                <tr>
+                    <th>Nom d'utilisateur</th>
+                    <th>Mot de passe</th>
+                    <th>Rôle</th>
+                    <th>Date de création</th>
+                    <th>Statut</th>
+                    <th>Dernière connexion</th>
+                    <th>Actions</th>
+                </tr>
+            `;
+            users.forEach(user => {
+                const row = usersTable.insertRow();
+                row.insertCell(0).innerText = user.username;
+                row.insertCell(1).innerText = user.password;
+                row.insertCell(2).innerText = user.role;
+                row.insertCell(3).innerText = user.createdAt;
+                row.insertCell(4).innerText = user.status;
+                row.insertCell(5).innerText = user.lastLogin;
+                const actionsCell = row.insertCell(6);
+                actionsCell.innerHTML = `
+                    <button onclick="editUser('${user.username}')">Modifier</button>
+                    <button onclick="deleteUser('${user.username}')">Supprimer</button>
+                    <button onclick="resetPassword('${user.username}')">Réinitialiser le mot de passe</button>
+                `;
+            });
+        }
+
+        function editUser(username) {
+            // Implémenter la logique de modification de l'utilisateur
+        }
+
+        function deleteUser(username) {
+            const index = users.findIndex(user => user.username === username);
+            if (index !== -1) {
+                users.splice(index, 1);
+                saveUsers();
+                displayUsers();
+            }
+        }
+
+        function resetPassword(username) {
+            const user = users.find(user => user.username === username);
+            if (user) {
+                const newPassword = Math.floor(1000 + Math.random() * 9000).toString();
+                user.password = newPassword;
+                saveUsers();
+                displayUsers();
+                alert(`Le mot de passe pour ${username} a été réinitialisé: ${newPassword}`);
             }
         }
 
@@ -302,6 +355,20 @@
             <input type="text" id="newUsername" placeholder="Nom d'utilisateur">
             <button type="button" onclick="createAccount()">Créer un identifiant</button>
             <p id="generatedPassword"></p>
+
+            <h3>Liste des utilisateurs</h3>
+            <table id="usersTable">
+                <tr>
+                    <th>Nom d'utilisateur</th>
+                    <th>Mot de passe</th>
+                    <th>Rôle</th>
+                    <th>Date de création</th>
+                    <th>Statut</th>
+                    <th>Dernière connexion</th>
+                    <th>Actions</th>
+                </tr>
+                <!-- Les utilisateurs seront ajoutés ici -->
+            </table>
         </div>
     </main>
     <div id="loginOverlay">
