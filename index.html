@@ -33,8 +33,6 @@
         #clock {
             font-size: 1.5em;
             font-weight: bold;
-            position: absolute;
-            right: 20px;
             display: flex;
             align-items: center;
         }
@@ -44,6 +42,12 @@
         }
         .flip {
             transform: rotateX(180deg);
+        }
+        .logout-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right: 20px;
         }
         main {
             display: flex;
@@ -264,11 +268,10 @@
             const sessionUser = getSession();
             if (sessionUser) {
                 document.getElementById("loginOverlay").style.display = "none";
+                document.querySelector('main').style.display = 'flex';
                 if (sessionUser === "admin") {
                     document.getElementById("adminPanel").style.display = "flex";
                 }
-                document.getElementById("mainContent").style.display = "flex";
-                document.querySelector('main').style.display = 'flex';
                 displayUsers(); // Afficher les utilisateurs dans le panneau d'administration
             } else {
                 const username = prompt("Veuillez entrer votre nom d'utilisateur:");
@@ -277,16 +280,12 @@
 
                 if (username === "admin" && password === "1234") {
                     setSession(username);
-                    document.getElementById("adminPanel").style.display = "flex";
-                    document.getElementById("accessDenied").style.display = "none";
-                    document.getElementById("mainContent").style.display = "flex";
                     document.getElementById("loginOverlay").style.display = "none";
                     document.querySelector('main').style.display = 'flex';
+                    document.getElementById("adminPanel").style.display = "flex";
                     displayUsers(); // Afficher les utilisateurs dans le panneau d'administration
                 } else if (user) {
                     setSession(username);
-                    document.getElementById("accessDenied").style.display = "none";
-                    document.getElementById("mainContent").style.display = "flex";
                     document.getElementById("loginOverlay").style.display = "none";
                     document.querySelector('main').style.display = 'flex';
                 } else {
@@ -417,13 +416,15 @@
 <body>
     <header>
         <img src="Logo_fd-ogec.png" alt="Logo OGEC Lorraine">
-        <div id="clock">
-            <span id="date"></span>
-            <span id="hours" class="time-part"></span>:
-            <span id="minutes" class="time-part"></span>:
-            <span id="seconds" class="time-part"></span>
+        <div class="logout-container">
+            <div id="clock">
+                <span id="date"></span>
+                <span id="hours" class="time-part"></span>:
+                <span id="minutes" class="time-part"></span>:
+                <span id="seconds" class="time-part"></span>
+            </div>
+            <button onclick="clearSession()">Déconnexion</button>
         </div>
-        <button onclick="clearSession()">Déconnexion</button>
     </header>
     <main>
         <div class="container">
