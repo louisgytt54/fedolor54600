@@ -93,7 +93,7 @@
                 transform: translateY(0);
             }
             50% {
-                transform: translateY(-10px;
+                transform: translateY(-10px);
             }
         }
         .button-animate {
@@ -223,9 +223,7 @@
                 document.getElementById("mainContent").style.display = "flex";
                 document.getElementById("loginOverlay").style.display = "none";
                 document.querySelector('main').style.display = 'flex';
-                displayUsers(); // Afficher les
-
- utilisateurs dans le panneau d'administration
+                displayUsers(); // Afficher les utilisateurs dans le panneau d'administration
             } else if (user) {
                 document.getElementById("accessDenied").style.display = "none";
                 document.getElementById("mainContent").style.display = "flex";
@@ -282,7 +280,19 @@
         }
 
         function editUser(username) {
-            // Implémenter la logique de modification de l'utilisateur
+            const user = users.find(user => user.username === username);
+            if (user) {
+                const newUsername = prompt("Entrez le nouveau nom d'utilisateur:", user.username);
+                const newRole = prompt("Entrez le nouveau rôle:", user.role);
+                const newStatus = prompt("Entrez le nouveau statut (active/inactive):", user.status);
+
+                if (newUsername) user.username = newUsername;
+                if (newRole) user.role = newRole;
+                if (newStatus) user.status = newStatus;
+
+                saveUsers();
+                displayUsers();
+            }
         }
 
         function deleteUser(username) {
