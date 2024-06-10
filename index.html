@@ -11,8 +11,7 @@
             margin: 0;
             padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             height: 100vh;
             text-align: center;
@@ -33,13 +32,27 @@
         }
         main {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
             flex: 1;
             width: 100%;
-            height: 100%;
-            display: none; /* Masquer le contenu principal initialement */
+            padding-top: 100px; /* Ajustement pour ne pas masquer le contenu par le header */
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+        }
+        .calculator, .admin-panel {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            flex: 1;
+            margin: 10px;
+        }
+        .calculator {
+            margin-right: 20px;
         }
         h2, h3 {
             color: #3E3E47;
@@ -48,7 +61,7 @@
             margin: 20px 0;
         }
         table {
-            width: 90%;
+            width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
@@ -137,8 +150,7 @@
             height: 100%;
         }
         #adminPanel {
-            margin-top: 20px;
-            display: none;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -160,6 +172,26 @@
         // Sauvegarder les utilisateurs dans localStorage
         function saveUsers() {
             localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Gestion des sessions utilisateur
+        function setSession(username) {
+            const sessionExpiry = new Date().getTime() + (30 * 60 * 1000); // 30 minutes
+            localStorage.setItem('session', JSON.stringify({ username, sessionExpiry }));
+        }
+
+        function getSession() {
+            const session = JSON.parse(localStorage.getItem('session'));
+            if (session && new Date().getTime() < session.sessionExpiry) {
+                return session.username;
+            } else {
+                localStorage.removeItem('session');
+                return null;
+            }
+        }
+
+        function clearSession() {
+            localStorage.removeItem('session');
         }
 
         function calculateDays() {
@@ -213,25 +245,38 @@
         }
 
         function verifyLogin() {
-            const username = prompt("Veuillez entrer votre nom d'utilisateur:");
-            const password = prompt("Veuillez entrer votre mot de passe:");
-            const user = users.find(user => user.username === username && user.password === password);
-
-            if (username === "admin" && password === "1234") {
-                document.getElementById("adminPanel").style.display = "flex";
-                document.getElementById("accessDenied").style.display = "none";
-                document.getElementById("mainContent").style.display = "flex";
+            const sessionUser = getSession();
+            if (sessionUser) {
                 document.getElementById("loginOverlay").style.display = "none";
+                if (sessionUser === "admin") {
+                    document.getElementById("adminPanel").style.display = "flex";
+                }
+                document.getElementById("mainContent").style.display = "flex";
                 document.querySelector('main').style.display = 'flex';
                 displayUsers(); // Afficher les utilisateurs dans le panneau d'administration
-            } else if (user) {
-                document.getElementById("accessDenied").style.display = "none";
-                document.getElementById("mainContent").style.display = "flex";
-                document.getElementById("loginOverlay").style.display = "none";
-                document.querySelector('main').style.display = 'flex';
             } else {
-                alert("Identifiants incorrects, veuillez réessayer.");
-                verifyLogin();
+                const username = prompt("Veuillez entrer votre nom d'utilisateur:");
+                const password = prompt("Veuillez entrer votre mot de passe:");
+                const user = users.find(user => user.username === username && user.password === password);
+
+                if (username === "admin" && password === "1234") {
+                    setSession(username);
+                    document.getElementById("adminPanel").style.display = "flex";
+                    document.getElementById("accessDenied").style.display = "none";
+                    document.getElementById("mainContent").style.display = "flex";
+                    document.getElementById("loginOverlay").style.display = "none";
+                    document.querySelector('main').style.display = 'flex';
+                    displayUsers(); // Afficher les utilisateurs dans le panneau d'administration
+                } else if (user) {
+                    setSession(username);
+                    document.getElementById("accessDenied").style.display = "none";
+                    document.getElementById("mainContent").style.display = "flex";
+                    document.getElementById("loginOverlay").style.display = "none";
+                    document.querySelector('main').style.display = 'flex';
+                } else {
+                    alert("Identifiants incorrects, veuillez réessayer.");
+                    verifyLogin();
+                }
             }
         }
 
@@ -316,7 +361,6 @@
         }
 
         window.onload = function() {
-            document.getElementById("loginOverlay").style.display = "flex";
             verifyLogin();
         };
     </script>
@@ -326,59 +370,58 @@
         <img src="Logo_fd-ogec.png" alt="Logo OGEC Lorraine">
     </header>
     <main>
-        <div id="accessDenied">
-            <h1>Accès non autorisé</h1>
-            <p>Fedolor vous indique que vous n'avez pas accès à cette ressource.</p>
-        </div>
+        <div class="container">
+            <div class="calculator">
+                <div id="mainContent">
+                    <h2>Calcul des jours de congé payé</h2>
+                    <h3>Dates d'arrêt maladie</h3>
+                    <form>
+                        <label for="startDate">Date de début :</label>
+                        <input type="date" id="startDate" name="startDate">
+                        <br>
+                        <label for="endDate">Date de fin :</label>
+                        <input type="date" id="endDate" name="endDate">
+                        <br>
+                        <label for="typeArret">Type d'arrêt :</label>
+                        <select id="typeArret" name="typeArret">
+                            <option value="professionnelle">Maladie professionnelle</option>
+                            <option value="classique">Maladie classique</option>
+                        </select>
+                        <br>
+                        <label for="classification">Classification (AT/MP) :</label>
+                        <select id="classification" name="classification">
+                            <option value="36">36 jours par an</option>
+                            <option value="51">51 jours par an</option>
+                        </select>
+                    </form>
+                    <h3>Calcul final des jours acquis</h3>
+                    <button type="button" onclick="calculateDays()">Calculer
+                        <div class="button-animate"></div>
+                    </button>
+                    <p>Total général : <span id="totalDays" class="animate"></span></p>
+                </div>
+            </div>
 
-        <div id="mainContent">
-            <h2>Calcul des jours de congé payé</h2>
-            <h3>Dates d'arrêt maladie</h3>
-            <form>
-                <label for="startDate">Date de début :</label>
-                <input type="date" id="startDate" name="startDate">
-                <br>
-                <label for="endDate">Date de fin :</label>
-                <input type="date" id="endDate" name="endDate">
-                <br>
-                <label for="typeArret">Type d'arrêt :</label>
-                <select id="typeArret" name="typeArret">
-                    <option value="professionnelle">Maladie professionnelle</option>
-                    <option value="classique">Maladie classique</option>
-                </select>
-                <br>
-                <label for="classification">Classification (AT/MP) :</label>
-                <select id="classification" name="classification">
-                    <option value="36">36 jours par an</option>
-                    <option value="51">51 jours par an</option>
-                </select>
-            </form>
-            <h3>Calcul final des jours acquis</h3>
-            <button type="button" onclick="calculateDays()">Calculer
-                <div class="button-animate"></div>
-            </button>
-            <p>Total général : <span id="totalDays" class="animate"></span></p>
-        </div>
+            <div class="admin-panel" id="adminPanel">
+                <h3>Créer un nouvel identifiant utilisateur</h3>
+                <input type="text" id="newUsername" placeholder="Nom d'utilisateur">
+                <button type="button" onclick="createAccount()">Créer un identifiant</button>
+                <p id="generatedPassword"></p>
 
-        <div id="adminPanel">
-            <h3>Créer un nouvel identifiant utilisateur</h3>
-            <input type="text" id="newUsername" placeholder="Nom d'utilisateur">
-            <button type="button" onclick="createAccount()">Créer un identifiant</button>
-            <p id="generatedPassword"></p>
-
-            <h3>Liste des utilisateurs</h3>
-            <table id="usersTable">
-                <tr>
-                    <th>Nom d'utilisateur</th>
-                    <th>Mot de passe</th>
-                    <th>Rôle</th>
-                    <th>Date de création</th>
-                    <th>Statut</th>
-                    <th>Dernière connexion</th>
-                    <th>Actions</th>
-                </tr>
-                <!-- Les utilisateurs seront ajoutés ici -->
-            </table>
+                <h3>Liste des utilisateurs</h3>
+                <table id="usersTable">
+                    <tr>
+                        <th>Nom d'utilisateur</th>
+                        <th>Mot de passe</th>
+                        <th>Rôle</th>
+                        <th>Date de création</th>
+                        <th>Statut</th>
+                        <th>Dernière connexion</th>
+                        <th>Actions</th>
+                    </tr>
+                    <!-- Les utilisateurs seront ajoutés ici -->
+                </table>
+            </div>
         </div>
     </main>
     <div id="loginOverlay">
